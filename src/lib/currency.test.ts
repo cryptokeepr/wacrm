@@ -57,6 +57,13 @@ describe("formatCurrencyShort", () => {
   it("uses the matching symbol for non-USD currencies", () => {
     expect(formatCurrencyShort(1_000, "EUR")).toBe("€1.0k");
     expect(formatCurrencyShort(1_000, "INR")).toBe("₹1.0k");
+    expect(formatCurrencyShort(1_000, "SAR")).toBe("ر.س1.0k");
+  });
+
+  it("offers Saudi Riyal and formats it", () => {
+    expect(CURRENCIES.some((c) => c.code === "SAR")).toBe(true);
+    const out = formatCurrency(1234, "SAR");
+    expect(out).toMatch(/SAR|ر\.س/);
   });
 
   it("falls back to the code prefix for unknown currencies (no throw)", () => {

@@ -42,6 +42,7 @@ export const CURRENCIES: CurrencyOption[] = [
   { code: "JPY", label: t("JPY"), symbol: "¥" },
   { code: "CNY", label: t("CNY"), symbol: "¥" },
   { code: "AED", label: t("AED"), symbol: "د.إ" },
+  { code: "SAR", label: t("SAR"), symbol: "ر.س" },
   { code: "ZAR", label: t("ZAR"), symbol: "R" },
   { code: "NGN", label: t("NGN"), symbol: "₦" },
   { code: "SGD", label: t("SGD"), symbol: "S$" },
