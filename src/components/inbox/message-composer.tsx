@@ -748,7 +748,7 @@ export function MessageComposer({
           </GatedButton>
           </div>
 
-          <textarea
+          <textarea dir="auto"
             ref={textareaRef}
             value={text}
             onChange={handleChange}

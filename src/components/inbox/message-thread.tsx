@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -133,7 +134,7 @@ function formatDateSeparator(dateStr: string, t: ReturnType<typeof useTranslatio
   const date = new Date(dateStr);
   if (isToday(date)) return t("today");
   if (isYesterday(date)) return t("yesterday");
-  return format(date, "MMMM d, yyyy");
+  return format(date, "MMMM d, yyyy", { locale: DATE_FNS_LOCALE });
 }
 
 function groupMessagesByDate(messages: Message[]) {

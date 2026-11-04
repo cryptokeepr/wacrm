@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
@@ -116,7 +117,7 @@ export function MediaLightbox({
   if (!item) return null;
 
   const authorLabel = item.fromCustomer ? contactLabel : t("you");
-  const timestamp = format(new Date(item.createdAt), "MMM d, yyyy HH:mm");
+  const timestamp = format(new Date(item.createdAt), "MMM d, yyyy HH:mm", { locale: DATE_FNS_LOCALE });
 
   return (
     <Dialog
@@ -205,7 +206,7 @@ export function MediaLightbox({
         </div>
 
         {item.caption && (
-          <p className="max-h-24 overflow-y-auto whitespace-pre-wrap break-words text-sm">
+          <p dir="auto" className="max-h-24 overflow-y-auto whitespace-pre-wrap break-words text-sm">
             {item.caption}
           </p>
         )}

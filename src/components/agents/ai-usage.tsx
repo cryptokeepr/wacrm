@@ -1,5 +1,6 @@
 'use client';
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -105,7 +106,7 @@ export function AiUsageCard() {
   const tokensLabel = t('tokens');
   const chartData =
     data?.daily.map((d) => ({
-      day: format(parseISO(d.date), 'MMM d'),
+      day: format(parseISO(d.date), 'MMM d', { locale: DATE_FNS_LOCALE }),
       [tokensLabel]: d.tokens,
     })) ?? [];
   const hasSpend = (data?.totals.total_tokens ?? 0) > 0;

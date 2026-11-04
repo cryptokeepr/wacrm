@@ -22,6 +22,7 @@
 // this page after email verification.
 // ============================================================
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -298,7 +299,7 @@ export default function JoinPage() {
       <CardDescription className="text-muted-foreground">
         {t.rich('joinAs', {
           role: tRoles(peek.role),
-          date: new Date(peek.expires_at).toLocaleDateString(undefined, {
+          date: new Date(peek.expires_at).toLocaleDateString(INTL_LOCALE, {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
