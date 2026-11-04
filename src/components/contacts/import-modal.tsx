@@ -524,22 +524,22 @@ export function ImportModal({
                   <table className="w-full min-w-[32rem] text-xs">
                     <thead>
                       <tr className="border-b border-border bg-background/60">
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
+                        <th className="px-3 py-2 text-start font-medium whitespace-nowrap text-muted-foreground">
                           {t('columns.phone')}
                         </th>
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
+                        <th className="px-3 py-2 text-start font-medium whitespace-nowrap text-muted-foreground">
                           {t('columns.name')}
                         </th>
-                        <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
+                        <th className="px-3 py-2 text-start font-medium whitespace-nowrap text-muted-foreground">
                           {t('columns.email')}
                         </th>
                         {previewHasCompany && (
-                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
+                          <th className="px-3 py-2 text-start font-medium whitespace-nowrap text-muted-foreground">
                             {t('columns.company')}
                           </th>
                         )}
                         {previewHasTags && (
-                          <th className="px-3 py-2 text-left font-medium whitespace-nowrap text-muted-foreground">
+                          <th className="px-3 py-2 text-start font-medium whitespace-nowrap text-muted-foreground">
                             {t('columns.tags')}
                           </th>
                         )}
@@ -629,7 +629,7 @@ export function ImportModal({
                       <AlertTriangle className="size-4 shrink-0" />
                       {t('resultInvalidPhone', { count: result.invalidPhone })}
                     </div>
-                    <p className="pl-[1.375rem] text-xs text-muted-foreground">
+                    <p className="ps-[1.375rem] text-xs text-muted-foreground">
                       {t('invalidPhoneHint')}
                     </p>
                   </div>

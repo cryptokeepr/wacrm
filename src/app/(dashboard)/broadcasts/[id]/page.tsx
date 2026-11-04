@@ -105,7 +105,7 @@ function FunnelChart({ steps }: { steps: FunnelStep[] }) {
                 />
                 <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-foreground">
                   {step.value.toLocaleString(INTL_LOCALE)}
-                  <span className="ml-2 text-muted-foreground/80">
+                  <span className="ms-2 text-muted-foreground/80">
                     ({pctOfSent}%)
                   </span>
                 </span>
@@ -352,7 +352,7 @@ export default function BroadcastDetailPage() {
             onClick={() => router.push('/broadcasts')}
             className="border-border"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
           </Button>
           <div>
             <div className="flex items-center gap-3">

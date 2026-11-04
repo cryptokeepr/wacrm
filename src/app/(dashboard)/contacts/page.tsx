@@ -406,7 +406,7 @@ export default function ContactsPage() {
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => {
@@ -416,7 +416,7 @@ export default function ContactsPage() {
                 setPage(0);
               }}
               placeholder={t('searchPlaceholder')}
-              className="pl-8 bg-card border-border text-foreground placeholder:text-muted-foreground"
+              className="ps-8 bg-card border-border text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
@@ -432,7 +432,7 @@ export default function ContactsPage() {
               <Filter className="size-4" />
               {t('filterByTags')}
               {selectedTagIds.length > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
+                <span className="ms-1 inline-flex items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
                   {selectedTagIds.length}
                 </span>
               )}
@@ -731,7 +731,7 @@ export default function ContactsPage() {
               onClick={() => setPage((p) => p - 1)}
               className="border-border text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
             >
-              <ChevronLeft className="size-4" />
+              <ChevronLeft className="rtl:rotate-180 size-4" />
             </Button>
             <span className="text-xs text-muted-foreground px-2">
               {t('pageCount', { page: page + 1, total: totalPages })}
@@ -743,7 +743,7 @@ export default function ContactsPage() {
               onClick={() => setPage((p) => p + 1)}
               className="border-border text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
             >
-              <ChevronRight className="size-4" />
+              <ChevronRight className="rtl:rotate-180 size-4" />
             </Button>
           </div>
         </div>

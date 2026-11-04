@@ -182,7 +182,7 @@ export default function FlowRunsPage() {
         onClick={() => router.push(`/flows/${flow.id}`)}
         className="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3 w-3" />
+        <ArrowLeft className="rtl:rotate-180 h-3 w-3" />
         {flow.name}
       </button>
       <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
@@ -240,12 +240,12 @@ function RunCard({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        className="flex w-full items-center gap-3 px-4 py-3 text-start"
       >
         {expanded ? (
           <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronRight className="rtl:rotate-180 h-4 w-4 shrink-0 text-muted-foreground" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

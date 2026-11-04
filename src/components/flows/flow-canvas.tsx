@@ -521,7 +521,9 @@ function FlowCanvasInner() {
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden">
+      {/* The canvas is a diagram with physical left/right handles and
+          panels, so it stays LTR even when the app runs in Arabic. */}
+      <div dir="ltr" className="h-full w-full overflow-hidden">
         <ReactFlow
           nodes={rfNodes}
           edges={rfEdges}
