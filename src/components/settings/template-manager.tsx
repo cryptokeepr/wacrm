@@ -32,6 +32,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
+import { APP_LOCALE } from '@/lib/i18n/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import { SettingsPanelHead } from './settings-panel-head';
 import {
@@ -84,10 +85,19 @@ interface TemplateFormData {
   buttons: TemplateButton[];
 }
 
+// New templates start in the install's language (Meta language codes).
+const DEFAULT_TEMPLATE_LANGUAGE: Record<string, string> = {
+  en: 'en_US',
+  pt: 'pt_BR',
+  es: 'es',
+  ko: 'ko',
+  ar: 'ar',
+};
+
 const emptyForm: TemplateFormData = {
   name: '',
   category: 'Marketing',
-  language: 'en_US',
+  language: DEFAULT_TEMPLATE_LANGUAGE[APP_LOCALE] ?? 'en_US',
   header_format: 'none',
   header_content: '',
   header_media_url: '',
@@ -116,6 +126,10 @@ const COMMON_LANGUAGE_CODES = [
   'ru',
   'tr',
   'lt',
+  'ko',
+  'ar',
+  'ar_SA',
+  'ar_EG',
 ];
 
 function emptyButton(type: TemplateButton['type']): TemplateButton {
@@ -591,11 +605,11 @@ export function TemplateManager() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p dir="auto" className="text-sm text-muted-foreground line-clamp-2">
                       {template.body_text}
                     </p>
                     {template.footer_text && (
-                      <p className="text-xs text-muted-foreground italic">
+                      <p dir="auto" className="text-xs text-muted-foreground italic">
                         {template.footer_text}
                       </p>
                     )}
@@ -751,6 +765,7 @@ export function TemplateManager() {
                 <Label className="text-muted-foreground">{t('language')}</Label>
                 <Input
                   list="template-language-codes"
+                  dir="ltr"
                   placeholder="en_US"
                   value={form.language}
                   onChange={(e) =>
@@ -818,6 +833,7 @@ export function TemplateManager() {
               {form.header_format === 'text' && (
                 <div className="space-y-2 mt-2">
                   <Input
+                    dir="auto"
                     id="template-header-text"
                     aria-label={t('headerTextLabel')}
                     placeholder={t.raw('headerTextPlaceholder')}
@@ -909,6 +925,7 @@ export function TemplateManager() {
             <div className="space-y-2">
               <Label className="text-muted-foreground">{t('bodyText')}</Label>
               <Textarea
+                dir="auto"
                 placeholder={t.raw('bodyPlaceholder')}
                 value={form.body_text}
                 onChange={(e) =>
@@ -952,6 +969,7 @@ export function TemplateManager() {
             <div className="space-y-2">
               <Label className="text-muted-foreground">{t('footer')}</Label>
               <Input
+                dir="auto"
                 placeholder={t('footerPlaceholder')}
                 value={form.footer_text}
                 onChange={(e) =>

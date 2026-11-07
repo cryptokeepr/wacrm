@@ -244,7 +244,7 @@ export function TemplatePicker({
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                      <p dir="auto" className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                         {t.body_text}
                       </p>
                     </div>
@@ -258,11 +258,11 @@ export function TemplatePicker({
           <div className="space-y-3">
             <div className="rounded-md border border-border bg-background/50 p-3">
               <p className="mb-1 text-xs text-muted-foreground">{t("preview")}</p>
-              <p className="whitespace-pre-wrap text-sm text-popover-foreground">
+              <p dir="auto" className="whitespace-pre-wrap text-sm text-popover-foreground">
                 {renderBodyPreview(selected.body_text, params)}
               </p>
               {selected.footer_text && (
-                <p className="mt-2 text-xs italic text-muted-foreground">
+                <p dir="auto" className="mt-2 text-xs italic text-muted-foreground">
                   {selected.footer_text}
                 </p>
               )}
