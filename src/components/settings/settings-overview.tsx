@@ -259,7 +259,7 @@ export function SettingsOverview({
               type="button"
               onClick={() => onSelect(section)}
               className={cn(
-                'group flex items-start gap-3.5 rounded-xl border border-border bg-card p-4 text-left transition-colors',
+                'group flex items-start gap-3.5 rounded-xl border border-border bg-card p-4 text-start transition-colors',
                 'hover:border-primary-soft-2 hover:bg-card-2',
               )}
             >
@@ -280,7 +280,7 @@ export function SettingsOverview({
                   )}
                 </span>
               </span>
-              <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform rtl:rotate-180 group-hover:ltr:translate-x-0.5 group-hover:rtl:-translate-x-0.5" />
             </button>
           );
         })}

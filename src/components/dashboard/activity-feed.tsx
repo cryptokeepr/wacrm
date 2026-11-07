@@ -1,5 +1,6 @@
 "use client"
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import Link from 'next/link'
 import { useState } from 'react'
 import {
@@ -116,7 +117,7 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
               {t('showingOf', { visible: visible.length, totalLoaded, plus: totalLoaded === 50 ? '+' : '' })}
             </span>
             <div className="flex items-center gap-1">
-              <span className="mr-1 text-muted-foreground">{t('show')}</span>
+              <span className="me-1 text-muted-foreground">{t('show')}</span>
               {PAGE_SIZES.map((size, i) => {
                 const disabled = !isSizeUseful(size, i)
                 return (
@@ -153,5 +154,5 @@ function relativeTime(iso: string, t: ReturnType<typeof useTranslations>): strin
   if (diffSec < 3600) return t('timeM', { min: Math.floor(diffSec / 60) })
   if (diffSec < 86400) return t('timeH', { hr: Math.floor(diffSec / 3600) })
   if (diffSec < 2_592_000) return t('timeD', { day: Math.floor(diffSec / 86400) })
-  return new Date(iso).toLocaleDateString()
+  return new Date(iso).toLocaleDateString(INTL_LOCALE)
 }

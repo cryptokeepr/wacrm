@@ -92,7 +92,7 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
               <button
                 key={template.id}
                 onClick={() => onSelect(template)}
-                className={`flex flex-col gap-3 rounded-xl border p-4 text-left transition-all ${
+                className={`flex flex-col gap-3 rounded-xl border p-4 text-start transition-all ${
                   isSelected
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
                     : 'border-border bg-card/50 hover:border-border hover:bg-card'
@@ -106,7 +106,7 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
                     {template.category}
                   </span>
                 </div>
-                <p className="line-clamp-3 text-xs text-muted-foreground">{template.body_text}</p>
+                <p dir="auto" className="line-clamp-3 text-xs text-muted-foreground">{template.body_text}</p>
                 <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                   <span>{template.language ?? 'en_US'}</span>
                   {/* Status is omitted on purpose — every template
@@ -129,7 +129,7 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
           className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           {t('next')}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="rtl:rotate-180 h-4 w-4" />
         </Button>
       </div>
     </div>

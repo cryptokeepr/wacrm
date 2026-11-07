@@ -55,9 +55,9 @@ export function TeamCard({ data, now }: { data: DashboardOverview | null; now: n
             <TableHeader>
               <TableRow>
                 <TableHead>{t('member')}</TableHead>
-                <TableHead className="text-right">{t('open')}</TableHead>
-                <TableHead className="text-right">{t('replies')}</TableHead>
-                <TableHead className="text-right">{t('median')}</TableHead>
+                <TableHead className="text-end">{t('open')}</TableHead>
+                <TableHead className="text-end">{t('replies')}</TableHead>
+                <TableHead className="text-end">{t('median')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -77,7 +77,7 @@ export function TeamCard({ data, now }: { data: DashboardOverview | null; now: n
                         <span className="sr-only">{t(`presence.${presence}`)}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-end tabular-nums">
                       <span className="inline-flex items-center gap-2">
                         {format.number(m.open)}
                         <span className="hidden h-1.5 w-10 overflow-hidden rounded-full bg-muted sm:inline-block">
@@ -88,10 +88,10 @@ export function TeamCard({ data, now }: { data: DashboardOverview | null; now: n
                         </span>
                       </span>
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">{format.number(m.replies)}</TableCell>
+                    <TableCell className="text-end tabular-nums">{format.number(m.replies)}</TableCell>
                     <TableCell
                       className={cn(
-                        'text-right tabular-nums',
+                        'text-end tabular-nums',
                         m.medianMinutes != null && m.medianMinutes > target && 'text-status-serious',
                       )}
                     >
@@ -112,9 +112,9 @@ export function TeamCard({ data, now }: { data: DashboardOverview | null; now: n
                       {t('ai')}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right text-muted-foreground">{t('none')}</TableCell>
-                  <TableCell className="text-right tabular-nums">{format.number(data.replies.ai.replies)}</TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-end text-muted-foreground">{t('none')}</TableCell>
+                  <TableCell className="text-end tabular-nums">{format.number(data.replies.ai.replies)}</TableCell>
+                  <TableCell className="text-end tabular-nums">
                     {data.replies.ai.medianMinutes == null ? t('none') : formatDuration(data.replies.ai.medianMinutes)}
                   </TableCell>
                 </TableRow>

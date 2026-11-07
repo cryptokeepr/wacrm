@@ -89,7 +89,7 @@ export function ReplyQueueCard({ data, now }: { data: DashboardOverview | null; 
                         </Badge>
                       ) : null}
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                       <p
                         className={cn(
                           'text-sm font-semibold tabular-nums',

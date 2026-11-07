@@ -10,6 +10,7 @@
  * nothing is known.
  */
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { getT } from "@/lib/i18n/translate";
 
 /** App-wide fallback when no account/deal currency is available. */
@@ -70,7 +71,7 @@ export function formatCurrency(
   const code = (currency || DEFAULT_CURRENCY).trim();
   const amount = Number(value) || 0;
   try {
-    return new Intl.NumberFormat(undefined, {
+    return new Intl.NumberFormat(INTL_LOCALE, {
       style: "currency",
       currency: code,
       minimumFractionDigits: 0,
@@ -79,7 +80,7 @@ export function formatCurrency(
   } catch {
     // Invalid ISO code — show the raw code + grouped number so the
     // value is still legible instead of throwing.
-    return `${code} ${new Intl.NumberFormat(undefined, {
+    return `${code} ${new Intl.NumberFormat(INTL_LOCALE, {
       maximumFractionDigits: 0,
     }).format(amount)}`;
   }

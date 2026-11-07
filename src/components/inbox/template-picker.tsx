@@ -227,7 +227,7 @@ export function TemplatePicker({
                   key={t.id}
                   type="button"
                   onClick={() => pickTemplate(t)}
-                  className="w-full rounded-md border border-border bg-background/50 p-3 text-left transition-colors hover:border-primary/40 hover:bg-popover"
+                  className="w-full rounded-md border border-border bg-background/50 p-3 text-start transition-colors hover:border-primary/40 hover:bg-popover"
                 >
                   <div className="flex items-start gap-2">
                     <div className="min-w-0 flex-1">
@@ -244,11 +244,11 @@ export function TemplatePicker({
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                      <p dir="auto" className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                         {t.body_text}
                       </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                    <ChevronRight className="rtl:rotate-180 h-4 w-4 flex-shrink-0 text-muted-foreground" />
                   </div>
                 </button>
               ))
@@ -258,11 +258,11 @@ export function TemplatePicker({
           <div className="space-y-3">
             <div className="rounded-md border border-border bg-background/50 p-3">
               <p className="mb-1 text-xs text-muted-foreground">{t("preview")}</p>
-              <p className="whitespace-pre-wrap text-sm text-popover-foreground">
+              <p dir="auto" className="whitespace-pre-wrap text-sm text-popover-foreground">
                 {renderBodyPreview(selected.body_text, params)}
               </p>
               {selected.footer_text && (
-                <p className="mt-2 text-xs italic text-muted-foreground">
+                <p dir="auto" className="mt-2 text-xs italic text-muted-foreground">
                   {selected.footer_text}
                 </p>
               )}
@@ -327,7 +327,7 @@ export function TemplatePicker({
                 onClick={resetSelection}
                 className="border-border text-popover-foreground hover:bg-muted"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
                 {t("back")}
               </Button>
               <Button

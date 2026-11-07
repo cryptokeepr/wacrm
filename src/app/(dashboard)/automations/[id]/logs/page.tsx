@@ -93,7 +93,7 @@ export default function AutomationLogsPage({
           className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label={t("backAria")}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
         </button>
         <div>
           <h1 className="text-2xl font-bold text-foreground">{automation.name}</h1>
@@ -120,12 +120,12 @@ export default function AutomationLogsPage({
                 <button
                   type="button"
                   onClick={() => setOpenLogId(isOpen ? null : log.id)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-start"
                 >
                   {isOpen ? (
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    <ChevronRight className="rtl:rotate-180 h-4 w-4 text-muted-foreground" />
                   )}
                   <StatusBadge status={log.status} t={t} />
                   <div className="min-w-0 flex-1">

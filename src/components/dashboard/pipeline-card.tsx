@@ -86,7 +86,7 @@ export function PipelineCard({
                     style={{ width: `${(s.totalValue / maxValue) * 100}%` }}
                   />
                 </div>
-                <span className="text-right font-medium text-foreground tabular-nums">
+                <span className="text-end font-medium text-foreground tabular-nums">
                   {formatCurrency(s.totalValue, currency)}
                 </span>
               </li>

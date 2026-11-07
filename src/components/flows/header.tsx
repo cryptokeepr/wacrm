@@ -70,7 +70,7 @@ export function EditorHeader() {
           aria-label={t("backToFlows")}
           className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
         </button>
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary">
           <Workflow className="h-[18px] w-[18px]" />
@@ -96,7 +96,7 @@ export function EditorHeader() {
         )}
 
         {/* ---- right: runs · delete · activate · save ---- */}
-        <div className="ml-auto flex flex-wrap items-center gap-1.5">
+        <div className="ms-auto flex flex-wrap items-center gap-1.5">
           <Button
             variant="ghost"
             size="sm"
@@ -104,7 +104,7 @@ export function EditorHeader() {
           >
             <History className="h-3.5 w-3.5" />
             {t("runs")}
-            <span className="ml-0.5 rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
+            <span className="ms-0.5 rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
               {flow.execution_count}
             </span>
           </Button>

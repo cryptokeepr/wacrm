@@ -99,7 +99,7 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
           disabled={turns.length === 0 || sending}
           className="text-muted-foreground"
         >
-          <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> {t('reset')}
+          <RotateCcw className="me-1.5 h-3.5 w-3.5" /> {t('reset')}
         </Button>
       </div>
 
@@ -119,7 +119,7 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
                 onClick={onGoToSetup}
                 className="mt-1 h-auto p-0 text-xs"
               >
-                {t('goToSetup')} <ArrowRight className="ml-1 h-3 w-3" />
+                {t('goToSetup')} <ArrowRight className="rtl:rotate-180 ms-1 h-3 w-3" />
               </Button>
             )}
           </div>
@@ -140,8 +140,8 @@ export function AiPlayground({ onGoToSetup }: { onGoToSetup?: () => void }) {
               className={cn(
                 'max-w-[80%] rounded-2xl px-3.5 py-2 text-sm',
                 turn.role === 'user'
-                  ? 'rounded-br-sm bg-primary text-primary-foreground'
-                  : 'rounded-bl-sm bg-muted text-foreground',
+                  ? 'rounded-ee-sm bg-primary text-primary-foreground'
+                  : 'rounded-es-sm bg-muted text-foreground',
               )}
             >
               {turn.content && <p className="whitespace-pre-wrap">{turn.content}</p>}

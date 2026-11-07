@@ -1,5 +1,6 @@
 'use client';
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { addContactTag, deleteContactTag } from '@/lib/contacts/tag-api';
@@ -579,7 +580,7 @@ export function ContactDetailView({
                               color: tag.color,
                             }}
                           >
-                            {selected && <Check className="size-3 mr-1" />}
+                            {selected && <Check className="size-3 me-1" />}
                             {tag.name}
                           </button>
                         );
@@ -640,7 +641,7 @@ export function ContactDetailView({
                           </button>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          {new Date(note.created_at).toLocaleDateString('en-US', {
+                          {new Date(note.created_at).toLocaleDateString(INTL_LOCALE, {
                             month: 'short',
                             day: 'numeric',
                             year: 'numeric',

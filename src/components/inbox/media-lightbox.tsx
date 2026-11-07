@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import {
@@ -89,12 +90,15 @@ export function MediaLightbox({
   useEffect(() => {
     if (index < 0) return;
     const onKeyDown = (event: KeyboardEvent) => {
+      // In RTL the "previous" button sits on the right, so the arrow keys
+      // follow the buttons rather than the key names.
+      const step = document.documentElement.dir === "rtl" ? -1 : 1;
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        goTo(index - 1);
+        goTo(index - step);
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
-        goTo(index + 1);
+        goTo(index + step);
       }
     };
     window.addEventListener("keydown", onKeyDown, true);
@@ -116,7 +120,7 @@ export function MediaLightbox({
   if (!item) return null;
 
   const authorLabel = item.fromCustomer ? contactLabel : t("you");
-  const timestamp = format(new Date(item.createdAt), "MMM d, yyyy HH:mm");
+  const timestamp = format(new Date(item.createdAt), "MMM d, yyyy HH:mm", { locale: DATE_FNS_LOCALE });
 
   return (
     <Dialog
@@ -126,8 +130,8 @@ export function MediaLightbox({
       }}
     >
       <DialogContent className="flex w-auto max-w-[95vw] flex-col gap-3 p-3 sm:max-w-[min(95vw,72rem)]">
-        {/* pr-9 keeps the toolbar clear of the dialog's own close button. */}
-        <DialogHeader className="flex-row items-start gap-3 pr-9">
+        {/* pe-9 keeps the toolbar clear of the dialog's own close button. */}
+        <DialogHeader className="flex-row items-start gap-3 pe-9">
           <div className="min-w-0 flex-1">
             <DialogTitle className="truncate">{authorLabel}</DialogTitle>
             <DialogDescription className="truncate text-xs">
@@ -136,7 +140,7 @@ export function MediaLightbox({
           </div>
           <div className="flex shrink-0 items-center gap-1">
             {items.length > 1 && (
-              <span className="mr-1 text-xs tabular-nums text-muted-foreground">
+              <span className="me-1 text-xs tabular-nums text-muted-foreground">
                 {t("counter", { index: index + 1, total: items.length })}
               </span>
             )}
@@ -205,7 +209,7 @@ export function MediaLightbox({
         </div>
 
         {item.caption && (
-          <p className="max-h-24 overflow-y-auto whitespace-pre-wrap break-words text-sm">
+          <p dir="auto" className="max-h-24 overflow-y-auto whitespace-pre-wrap break-words text-sm">
             {item.caption}
           </p>
         )}
@@ -324,10 +328,10 @@ function NavButton({
       title={label}
       className={cn(
         "absolute top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border/60 bg-background/85 text-foreground shadow-md backdrop-blur-sm transition-colors hover:bg-background disabled:pointer-events-none disabled:opacity-0",
-        side === "left" ? "left-1" : "right-1",
+        side === "left" ? "start-1" : "end-1",
       )}
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-5 w-5 rtl:rotate-180" />
     </button>
   );
 }

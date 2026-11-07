@@ -1,5 +1,6 @@
 'use client';
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import {
@@ -687,7 +688,7 @@ export function WhatsAppConfig() {
                   dangerouslySetInnerHTML={{
                     __html: t('subscribedSince', {
                       date: config.registered_at
-                        ? new Date(config.registered_at).toLocaleString()
+                        ? new Date(config.registered_at).toLocaleString(INTL_LOCALE)
                         : t('unknownDate'),
                     }),
                   }}
@@ -785,12 +786,12 @@ export function WhatsAppConfig() {
                       setTokenEdited(true);
                     }
                   }}
-                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground pr-10"
+                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground pe-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowToken(!showToken)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showToken ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
@@ -829,7 +830,7 @@ export function WhatsAppConfig() {
             <div className="space-y-2">
               <Label className="text-muted-foreground">
                 {t('twoStepPin')}
-                <span className="ml-1 text-muted-foreground">{t('optional')}</span>
+                <span className="ms-1 text-muted-foreground">{t('optional')}</span>
               </Label>
               <Input
                 type="text"

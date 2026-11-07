@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -181,7 +182,7 @@ export default function FlowRunsPage() {
         onClick={() => router.push(`/flows/${flow.id}`)}
         className="mb-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-3 w-3" />
+        <ArrowLeft className="rtl:rotate-180 h-3 w-3" />
         {flow.name}
       </button>
       <h1 className="text-xl font-semibold text-foreground">{t("title")}</h1>
@@ -230,6 +231,7 @@ function RunCard({
     run.contact?.name?.trim() || run.contact?.phone || t("unknownContact");
   const duration = run.ended_at
     ? formatDistanceToNow(new Date(run.ended_at), {
+        locale: DATE_FNS_LOCALE,
         addSuffix: false,
       })
     : null;
@@ -238,12 +240,12 @@ function RunCard({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        className="flex w-full items-center gap-3 px-4 py-3 text-start"
       >
         {expanded ? (
           <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <ChevronRight className="rtl:rotate-180 h-4 w-4 shrink-0 text-muted-foreground" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -275,7 +277,7 @@ function RunCard({
             )}
           </div>
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-            <span>{t("started", { time: format(new Date(run.started_at), "PP p") })}</span>
+            <span>{t("started", { time: format(new Date(run.started_at), "PP p", { locale: DATE_FNS_LOCALE }) })}</span>
             {run.reprompt_count > 0 && (
               <span>· {t("reprompts", { count: run.reprompt_count })}</span>
             )}
@@ -327,7 +329,7 @@ function EventLine({ ev }: { ev: EventRow }) {
   return (
     <div className="flex items-start gap-2 rounded-md px-2 py-1 text-xs">
       <span className="w-32 shrink-0 text-[10px] text-muted-foreground">
-        {format(new Date(ev.created_at), "HH:mm:ss")}
+        {format(new Date(ev.created_at), "HH:mm:ss", { locale: DATE_FNS_LOCALE })}
       </span>
       <span className={cn("w-32 shrink-0 font-mono text-[10px]", cls)}>
         {ev.event_type}

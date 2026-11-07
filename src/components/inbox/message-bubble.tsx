@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_FNS_LOCALE } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
 import type {
   Message,
@@ -97,7 +98,7 @@ function TemplateHeader({
 }) {
   if (header.type === "text") {
     return (
-      <p className="mt-1 break-words text-sm font-semibold">{header.text}</p>
+      <p dir="auto" className="mt-1 break-words text-sm font-semibold">{header.text}</p>
     );
   }
   if (!header.url) {
@@ -183,7 +184,7 @@ function MessageContent({
   switch (message.content_type) {
     case "text":
       return (
-        <p className="whitespace-pre-wrap break-words text-sm">
+        <p dir="auto" className="whitespace-pre-wrap break-words text-sm">
           <LinkifyText text={message.content_text ?? ""} isAgent={isAgent} />
         </p>
       );
@@ -197,7 +198,7 @@ function MessageContent({
             <MediaUnavailable label={t("photo")} t={t} />
           )}
           {message.content_text && (
-            <p className="mt-1 whitespace-pre-wrap break-words text-sm">
+            <p dir="auto" className="mt-1 whitespace-pre-wrap break-words text-sm">
               <LinkifyText text={message.content_text} isAgent={isAgent} />
             </p>
           )}
@@ -213,7 +214,7 @@ function MessageContent({
             <MediaUnavailable label={t("video")} t={t} />
           )}
           {message.content_text && (
-            <p className="mt-1 whitespace-pre-wrap break-words text-sm">
+            <p dir="auto" className="mt-1 whitespace-pre-wrap break-words text-sm">
               <LinkifyText text={message.content_text} isAgent={isAgent} />
             </p>
           )}
@@ -263,7 +264,7 @@ function MessageContent({
             <TemplateHeader header={view.header} message={message} t={t} />
           )}
           {message.content_text ? (
-            <p className="mt-1 whitespace-pre-wrap break-words text-sm">
+            <p dir="auto" className="mt-1 whitespace-pre-wrap break-words text-sm">
               <LinkifyText text={message.content_text} isAgent={isAgent} />
             </p>
           ) : (
@@ -341,7 +342,7 @@ function MessageContent({
               <CornerDownLeft className="h-3 w-3" />
               {t("buttonReply")}
             </span>
-            <p className="whitespace-pre-wrap break-words text-sm">
+            <p dir="auto" className="whitespace-pre-wrap break-words text-sm">
               <LinkifyText
                 text={message.content_text || t("interactiveReply")}
                 isAgent={isAgent}
@@ -351,7 +352,7 @@ function MessageContent({
         );
       }
       return (
-        <p className="whitespace-pre-wrap break-words text-sm">
+        <p dir="auto" className="whitespace-pre-wrap break-words text-sm">
           <LinkifyText
             text={message.content_text || t("interactiveReply")}
             isAgent={isAgent}
@@ -362,7 +363,7 @@ function MessageContent({
 
     default:
       return (
-        <p className="whitespace-pre-wrap break-words text-sm">
+        <p dir="auto" className="whitespace-pre-wrap break-words text-sm">
           <LinkifyText
             text={message.content_text || t("unsupported")}
             isAgent={isAgent}
@@ -383,7 +384,7 @@ export function MessageBubble({
   const t = useTranslations("Inbox.bubble");
 
   const isAgent = message.sender_type === "agent" || message.sender_type === "bot";
-  const time = format(new Date(message.created_at), "HH:mm");
+  const time = format(new Date(message.created_at), "HH:mm", { locale: DATE_FNS_LOCALE });
   const failure = isAgent ? failureReason(message) : null;
 
   // Row alignment + width cap are owned by <MessageActions> so its hover
@@ -399,8 +400,8 @@ export function MessageBubble({
         className={cn(
           "relative rounded-2xl px-3 py-2",
           isAgent
-            ? "rounded-br-md bg-primary text-primary-foreground"
-            : "rounded-bl-md bg-muted text-foreground",
+            ? "rounded-ee-md bg-primary text-primary-foreground"
+            : "rounded-es-md bg-muted text-foreground",
         )}
       >
         {reply && (

@@ -1,5 +1,6 @@
 'use client';
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -44,7 +45,7 @@ function RateCell({
   const pct = percent(value, total);
   return (
     <div className="flex items-center gap-2">
-      <span className="w-10 text-right text-xs tabular-nums text-muted-foreground">
+      <span className="w-10 text-end text-xs tabular-nums text-muted-foreground">
         {pct}%
       </span>
       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
@@ -223,7 +224,7 @@ export default function BroadcastsPage() {
               <TableRow className="border-border hover:bg-transparent">
                 <TableHead className="text-muted-foreground">{t('table.name')}</TableHead>
                 <TableHead className="hidden text-muted-foreground md:table-cell">{t('table.template')}</TableHead>
-                <TableHead className="hidden text-right text-muted-foreground sm:table-cell">
+                <TableHead className="hidden text-end text-muted-foreground sm:table-cell">
                   {t('table.recipients')}
                 </TableHead>
                 <TableHead className="hidden text-muted-foreground lg:table-cell">{t('table.delivery')}</TableHead>
@@ -247,7 +248,7 @@ export default function BroadcastsPage() {
                     <TableCell className="hidden text-muted-foreground md:table-cell">
                       {broadcast.template_name}
                     </TableCell>
-                    <TableCell className="hidden text-right text-muted-foreground tabular-nums sm:table-cell">
+                    <TableCell className="hidden text-end text-muted-foreground tabular-nums sm:table-cell">
                       {broadcast.total_recipients}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
@@ -278,7 +279,7 @@ export default function BroadcastsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="hidden text-muted-foreground sm:table-cell">
-                      {new Date(broadcast.created_at).toLocaleDateString()}
+                      {new Date(broadcast.created_at).toLocaleDateString(INTL_LOCALE)}
                     </TableCell>
                   </TableRow>
                 );

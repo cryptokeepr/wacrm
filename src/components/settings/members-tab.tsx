@@ -21,6 +21,7 @@
 //   the role anyway.
 // ============================================================
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -108,7 +109,7 @@ const EDITABLE_ROLES: { value: AccountRole }[] = [
 function fmtDate(iso: string): string {
   // Match the rest of the dashboard's locale-light formatting.
   const d = new Date(iso);
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString(INTL_LOCALE, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -401,7 +402,7 @@ export function MembersTab() {
 
                   {/* Joined date stays desktop-only. The mobile row's
                       vertical density makes the joined date noise. */}
-                  <div className="hidden sm:block text-right text-xs text-muted-foreground">
+                  <div className="hidden sm:block text-end text-xs text-muted-foreground">
                     {t('joined', { date: fmtDate(member.joined_at) })}
                   </div>
 

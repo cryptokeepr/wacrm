@@ -1,5 +1,6 @@
 'use client';
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useEffect, useState } from 'react';
 import { countAudience, type AudienceConfig } from '@/lib/broadcast-audience';
 import { createClient } from '@/lib/supabase/client';
@@ -110,7 +111,7 @@ export function Step4ScheduleSend({
               ) : (
                 <>
                   <Users className="h-3.5 w-3.5 text-primary" />
-                  <p className="font-medium text-foreground">{estimatedReach.toLocaleString()}</p>
+                  <p className="font-medium text-foreground">{estimatedReach.toLocaleString(INTL_LOCALE)}</p>
                 </>
               )}
             </div>
@@ -148,7 +149,7 @@ export function Step4ScheduleSend({
           disabled={isProcessing}
           className="border-border text-muted-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
           {t('back')}
         </Button>
 

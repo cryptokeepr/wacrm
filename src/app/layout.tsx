@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
-import { Inter } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -19,6 +20,20 @@ const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
 });
+
+// Arabic installs use IBM Plex Sans Arabic for the whole UI (it ships
+// matching Latin glyphs), exposed under the same --font-sans variable as
+// Inter so globals.css needs no change. Only one of the two variable
+// classes is applied to <html>.
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-sans",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+  preload: false,
+});
+
+/** Locales written right-to-left. */
+const RTL_LOCALES = new Set(["ar"]);
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
@@ -91,13 +106,15 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const dir = RTL_LOCALES.has(locale) ? "rtl" : "ltr";
 
   return (
     <html
       lang={locale}
+      dir={dir}
       data-theme={DEFAULT_THEME}
       data-mode={DEFAULT_MODE}
-      className={`${inter.variable} h-full antialiased`}
+      className={`${dir === "rtl" ? plexArabic.variable : inter.variable} h-full antialiased`}
       // The `theme-boot` script below rewrites `data-theme` and
       // `data-mode` on <html> from localStorage before React hydrates,
       // so for any non-default choice the client DOM intentionally
@@ -116,10 +133,12 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider messages={messages} locale={locale}>
-          <ThemeProvider>
-            {children}
-            <ThemedToaster />
-          </ThemeProvider>
+          <DirectionProvider direction={dir}>
+            <ThemeProvider>
+              {children}
+              <ThemedToaster />
+            </ThemeProvider>
+          </DirectionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,5 +1,6 @@
 'use client';
 
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { countAudience } from '@/lib/broadcast-audience';
@@ -271,7 +272,7 @@ export function Step2SelectAudience({
                     option.type === 'csv' ? audience.csvContacts : undefined,
                 })
               }
-              className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+              className={`flex items-start gap-3 rounded-xl border p-4 text-start transition-all ${
                 isSelected
                   ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
                   : 'border-border bg-card/50 hover:border-border'
@@ -321,7 +322,7 @@ export function Step2SelectAudience({
                     }`}
                   >
                     <span
-                      className="mr-1.5 h-2 w-2 rounded-full"
+                      className="me-1.5 h-2 w-2 rounded-full"
                       style={{ backgroundColor: tag.color }}
                     />
                     {tag.name}
@@ -451,7 +452,7 @@ export function Step2SelectAudience({
                   }`}
                 >
                   <span
-                    className="mr-1.5 h-2 w-2 rounded-full"
+                    className="me-1.5 h-2 w-2 rounded-full"
                     style={{ backgroundColor: tag.color }}
                   />
                   {tag.name}
@@ -474,7 +475,7 @@ export function Step2SelectAudience({
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <span className="text-sm text-foreground">
-              {estimatedCount.toLocaleString()}
+              {estimatedCount.toLocaleString(INTL_LOCALE)}
             </span>
             <span className="text-xs text-muted-foreground">{t('selectAudience.estimatedRecipients')}</span>
           </div>
@@ -491,7 +492,7 @@ export function Step2SelectAudience({
           onClick={onBack}
           className="border-border text-muted-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="rtl:rotate-180 h-4 w-4" />
           {t('back')}
         </Button>
         <Button
@@ -500,7 +501,7 @@ export function Step2SelectAudience({
           className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
         >
           {t('next')}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="rtl:rotate-180 h-4 w-4" />
         </Button>
       </div>
     </div>
