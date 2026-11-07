@@ -7,6 +7,7 @@ import {
 } from '@/lib/auth/account'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import {
+  MetaApiError,
   deleteMessageTemplate,
   editMessageTemplate,
 } from '@/lib/whatsapp/meta-api'
@@ -244,12 +245,27 @@ export async function PATCH(
   }
 }
 
+/**
+ * Meta refuses to delete templates it owns (the samples it adds to new
+ * accounts, like hello_world) and templates the token has no rights to.
+ */
+function isMetaPermissionError(e: MetaApiError): boolean {
+  return (
+    e.code === 10 ||
+    (e.code !== null && e.code >= 200 && e.code < 300) ||
+    /permission/i.test(e.message)
+  )
+}
+
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await context.params
+    // `?scope=local` removes the row from wacrm and leaves Meta alone —
+    // the way out when Meta won't delete the template.
+    const localOnly = new URL(request.url).searchParams.get('scope') === 'local'
     if (!UUID_RE.test(id)) {
       return NextResponse.json(
         { error: t('templates.invalidId') },
@@ -273,7 +289,7 @@ export async function DELETE(
       return NextResponse.json({ error: t('templates.notFound') }, { status: 404 })
     }
 
-    if (existing.meta_template_id && !isDryRun()) {
+    if (existing.meta_template_id && !localOnly && !isDryRun()) {
       const { data: config, error: configError } = await supabase
         .from('whatsapp_config')
         .select('*')
@@ -294,8 +310,24 @@ export async function DELETE(
           metaTemplateId: existing.meta_template_id,
         })
       } catch (e) {
-        const message = e instanceof Error ? e.message : t('templates.metaDeleteFailed')
-        return NextResponse.json({ error: message }, { status: 502 })
+        if (e instanceof MetaApiError && isMetaPermissionError(e)) {
+          return NextResponse.json(
+            {
+              error: t('templates.metaDeleteNoPermission'),
+              meta_error: e.message,
+              can_remove_locally: true,
+            },
+            { status: 403 },
+          )
+        }
+        const message =
+          e instanceof Error
+            ? t('templates.metaDeleteFailedWith', { message: e.message })
+            : t('templates.metaDeleteFailed')
+        return NextResponse.json(
+          { error: message, can_remove_locally: true },
+          { status: 502 },
+        )
       }
     }
 
