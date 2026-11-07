@@ -32,7 +32,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from 'next-intl';
-import { APP_LOCALE } from '@/lib/i18n/locale';
+import { APP_LOCALE, INTL_LOCALE } from '@/lib/i18n/locale';
 import { Card, CardContent } from '@/components/ui/card';
 import { SettingsPanelHead } from './settings-panel-head';
 import {
@@ -108,15 +108,17 @@ const emptyForm: TemplateFormData = {
   buttons: [],
 };
 
+// Meta language codes offered in the dropdown; anything else can be typed
+// via "Other code".
 const COMMON_LANGUAGE_CODES = [
   'en_US',
-  'en_GB',
   'en',
+  'en_GB',
+  'ar',
   'es',
   'es_ES',
   'es_MX',
   'fr',
-  'fr_FR',
   'de',
   'it',
   'pt_BR',
@@ -127,10 +129,31 @@ const COMMON_LANGUAGE_CODES = [
   'tr',
   'lt',
   'ko',
-  'ar',
-  'ar_SA',
-  'ar_EG',
 ];
+
+const OTHER_LANGUAGE = '__other__';
+
+let languageNames: Intl.DisplayNames | null | undefined;
+
+/** `ar` → `العربية (ar)` in an Arabic install, `Arabic (ar)` in English. */
+function languageLabel(code: string): string {
+  if (languageNames === undefined) {
+    try {
+      languageNames = new Intl.DisplayNames(INTL_LOCALE ?? 'en', {
+        type: 'language',
+      });
+    } catch {
+      languageNames = null;
+    }
+  }
+  let name: string | undefined;
+  try {
+    name = languageNames?.of(code.replace('_', '-'));
+  } catch {
+    name = undefined;
+  }
+  return name && name !== code ? `${name} (${code})` : code;
+}
 
 function emptyButton(type: TemplateButton['type']): TemplateButton {
   switch (type) {
@@ -150,6 +173,26 @@ export function TemplateManager() {
   // Meta's category ids (stored as-is) → display label in the UI language.
   const categoryLabel = (category: string) =>
     t.has(`categoryLabels.${category}`) ? t(`categoryLabels.${category}`) : category;
+  const headerFormatLabel = (type: HeaderFormat) =>
+    type === 'none'
+      ? t('headerNone')
+      : type === 'text'
+        ? t('headerText')
+        : type === 'image'
+          ? t('headerImage')
+          : type === 'video'
+            ? t('headerVideo')
+            : t('headerDocument');
+  const buttonTypeLabel = (type: TemplateButton['type']) =>
+    type === 'QUICK_REPLY'
+      ? t('btnQuickReply')
+      : type === 'URL'
+        ? t('btnUrl')
+        : type === 'PHONE_NUMBER'
+          ? t('btnPhone')
+          : t('btnCopyCode');
+  // "Other code" was picked, or the template uses a code outside the list.
+  const [customLanguage, setCustomLanguage] = useState(false);
   const supabase = createClient();
   const { user, accountId, loading: authLoading } = useAuth();
 
@@ -159,6 +202,8 @@ export function TemplateManager() {
   const [submitting, setSubmitting] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [form, setForm] = useState<TemplateFormData>(emptyForm);
+  const languageIsCustom =
+    customLanguage || !COMMON_LANGUAGE_CODES.includes(form.language);
   // Non-null when the dialog is editing an existing row — switches the
   // submit handler from POST /submit to PATCH /[id] and changes the
   // dialog title + CTA. Set to the template id to pre-fill from a row.
@@ -172,6 +217,9 @@ export function TemplateManager() {
   // doesn't take the template off Meta as well as locally.
   const [templateToDelete, setTemplateToDelete] =
     useState<MessageTemplate | null>(null);
+  // Why Meta refused the last delete; shown inside the dialog next to the
+  // "remove from app only" fallback.
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   // Header-media upload (image #230; video/document #562). Uploads to the
   // account-scoped chat-media bucket and stores the public URL in
   // header_media_url; the submit route turns that into a Meta
@@ -257,6 +305,7 @@ export function TemplateManager() {
 
   function openEdit(template: MessageTemplate) {
     setEditingId(template.id);
+    setCustomLanguage(false);
     setForm({
       name: template.name,
       category: template.category,
@@ -276,6 +325,7 @@ export function TemplateManager() {
   function openCreate() {
     setEditingId(null);
     setForm(emptyForm);
+    setCustomLanguage(false);
     setDialogOpen(true);
   }
 
@@ -314,6 +364,7 @@ export function TemplateManager() {
       );
       setDialogOpen(false);
       setForm(emptyForm);
+      setCustomLanguage(false);
       setEditingId(null);
     } catch (err) {
       console.error('Submit error:', err);
@@ -365,24 +416,41 @@ export function TemplateManager() {
     }
   }
 
-  async function confirmDelete() {
+  function closeDeleteDialog() {
+    setTemplateToDelete(null);
+    setDeleteError(null);
+  }
+
+  async function confirmDelete(localOnly = false) {
     const target = templateToDelete;
     if (!target || deletingId) return;
     setDeletingId(target.id);
+    setDeleteError(null);
     try {
       // Route handler scopes the Meta delete via hsm_id (so sibling
       // language variants survive) and falls through to remove the
-      // local row. Local-only rows skip the Meta call.
-      const res = await fetch(`/api/whatsapp/templates/${target.id}`, {
-        method: 'DELETE',
-      });
+      // local row. Local-only rows skip the Meta call, and so does
+      // `scope=local` ("remove from app only").
+      const res = await fetch(
+        `/api/whatsapp/templates/${target.id}${localOnly ? '?scope=local' : ''}`,
+        { method: 'DELETE' },
+      );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(data?.error || t('deleteFailedHttp', { status: res.status }));
+        const message =
+          data?.error || t('deleteFailedHttp', { status: res.status });
+        if (data?.can_remove_locally) {
+          // Keep the dialog open so the user can fall back to a local
+          // removal instead of being stuck with the template.
+          if (data.meta_error) console.warn('Meta delete refused:', data.meta_error);
+          setDeleteError(message);
+          return;
+        }
+        throw new Error(message);
       }
-      toast.success(t('toastDeleteSuccess'));
+      toast.success(localOnly ? t('toastRemovedLocal') : t('toastDeleteSuccess'));
       setTemplates((prev) => prev.filter((t) => t.id !== target.id));
-      setTemplateToDelete(null);
+      closeDeleteDialog();
     } catch (err) {
       console.error('Delete error:', err);
       toast.error(err instanceof Error ? err.message : t('toastDeleteError'));
@@ -687,6 +755,7 @@ export function TemplateManager() {
           if (!open) {
             setEditingId(null);
             setForm(emptyForm);
+            setCustomLanguage(false);
           }
         }}
       >
@@ -740,7 +809,7 @@ export function TemplateManager() {
                   disabled={categoryLocked}
                 >
                   <SelectTrigger className="w-full bg-muted border-border text-foreground">
-                    <SelectValue />
+                    <SelectValue>{categoryLabel(form.category)}</SelectValue>
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     {CATEGORIES.map((cat) => (
@@ -763,22 +832,57 @@ export function TemplateManager() {
 
               <div className="space-y-2">
                 <Label className="text-muted-foreground">{t('language')}</Label>
-                <Input
-                  list="template-language-codes"
-                  dir="ltr"
-                  placeholder="en_US"
-                  value={form.language}
-                  onChange={(e) =>
-                    setForm({ ...form, language: e.target.value })
-                  }
+                <Select
+                  value={languageIsCustom ? OTHER_LANGUAGE : form.language}
+                  onValueChange={(val) => {
+                    if (!val) return;
+                    if (val === OTHER_LANGUAGE) {
+                      setCustomLanguage(true);
+                      setForm({ ...form, language: '' });
+                    } else {
+                      setCustomLanguage(false);
+                      setForm({ ...form, language: val });
+                    }
+                  }}
                   disabled={editingId !== null}
-                  className="bg-muted border-border text-foreground placeholder:text-muted-foreground disabled:opacity-60 disabled:cursor-not-allowed"
-                />
-                <datalist id="template-language-codes">
-                  {COMMON_LANGUAGE_CODES.map((code) => (
-                    <option key={code} value={code} />
-                  ))}
-                </datalist>
+                >
+                  <SelectTrigger className="w-full bg-muted border-border text-foreground">
+                    <SelectValue>
+                      {languageIsCustom
+                        ? t('languageOther')
+                        : languageLabel(form.language)}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    {COMMON_LANGUAGE_CODES.map((code) => (
+                      <SelectItem
+                        key={code}
+                        value={code}
+                        className="text-popover-foreground focus:bg-muted focus:text-popover-foreground"
+                      >
+                        {languageLabel(code)}
+                      </SelectItem>
+                    ))}
+                    <SelectItem
+                      value={OTHER_LANGUAGE}
+                      className="text-popover-foreground focus:bg-muted focus:text-popover-foreground"
+                    >
+                      {t('languageOther')}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {languageIsCustom && editingId === null && (
+                  <Input
+                    dir="ltr"
+                    aria-label={t('language')}
+                    placeholder="en_US"
+                    value={form.language}
+                    onChange={(e) =>
+                      setForm({ ...form, language: e.target.value })
+                    }
+                    className="bg-muted border-border text-foreground placeholder:text-muted-foreground"
+                  />
+                )}
                 <p className="text-[11px] text-muted-foreground">
                   {editingId ? (
                     t('langFixed')
@@ -807,7 +911,7 @@ export function TemplateManager() {
                 }
               >
                 <SelectTrigger className="w-full bg-muted border-border text-foreground">
-                  <SelectValue />
+                  <SelectValue>{headerFormatLabel(form.header_format)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent className="bg-popover border-border">
                   {HEADER_FORMATS.map((type) => (
@@ -816,15 +920,7 @@ export function TemplateManager() {
                       value={type}
                       className="text-popover-foreground focus:bg-muted focus:text-popover-foreground"
                     >
-                      {type === 'none'
-                        ? t('headerNone')
-                        : type === 'text'
-                          ? t('headerText')
-                          : type === 'image'
-                            ? t('headerImage')
-                            : type === 'video'
-                              ? t('headerVideo')
-                              : t('headerDocument')}
+                      {headerFormatLabel(type)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1018,7 +1114,7 @@ export function TemplateManager() {
                           }}
                         >
                           <SelectTrigger className="w-40 bg-muted border-border text-foreground h-8 text-xs">
-                            <SelectValue />
+                            <SelectValue>{buttonTypeLabel(btn.type)}</SelectValue>
                           </SelectTrigger>
                           <SelectContent className="bg-popover border-border">
                             <SelectItem
@@ -1149,7 +1245,7 @@ export function TemplateManager() {
       <Dialog
         open={templateToDelete !== null}
         onOpenChange={(open) => {
-          if (!open) setTemplateToDelete(null);
+          if (!open) closeDeleteDialog();
         }}
       >
         <DialogContent className="bg-popover border-border sm:max-w-sm">
@@ -1161,17 +1257,38 @@ export function TemplateManager() {
                 : t('deleteLocalDesc', { name: templateToDelete?.name || '' })}
             </DialogDescription>
           </DialogHeader>
+          {deleteError && (
+            <div className="flex items-start gap-2 rounded border border-red-700/40 bg-red-950/30 px-3 py-2 text-xs text-red-300">
+              <AlertCircle className="size-4 mt-0.5 shrink-0" />
+              <p>{deleteError}</p>
+            </div>
+          )}
+          {templateToDelete?.meta_template_id && (
+            <p className="text-[11px] text-muted-foreground">
+              {t('removeLocalOnlyHint')}
+            </p>
+          )}
           <DialogFooter className="bg-popover border-border">
             <Button
               variant="outline"
-              onClick={() => setTemplateToDelete(null)}
+              onClick={closeDeleteDialog}
               disabled={deletingId !== null}
               className="border-border text-muted-foreground hover:bg-muted"
             >
               {t('cancel')}
             </Button>
+            {templateToDelete?.meta_template_id && (
+              <Button
+                variant="outline"
+                onClick={() => confirmDelete(true)}
+                disabled={deletingId !== null}
+                className="border-border text-foreground hover:bg-muted"
+              >
+                {t('removeLocalOnly')}
+              </Button>
+            )}
             <Button
-              onClick={confirmDelete}
+              onClick={() => confirmDelete()}
               disabled={deletingId !== null}
               className="bg-red-600 hover:bg-red-700 text-white"
             >

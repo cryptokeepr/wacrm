@@ -101,10 +101,20 @@ vi.mock('@/lib/whatsapp/encryption', () => ({
   isLegacyFormat: vi.fn(() => false),
 }))
 
-const meta = vi.hoisted(() => ({
-  editMessageTemplate: vi.fn(async () => ({})),
-  deleteMessageTemplate: vi.fn(async () => ({})),
-}))
+const meta = vi.hoisted(() => {
+  class MetaApiError extends Error {
+    code: number | null
+    constructor(message: string, fields: { code?: number | null } = {}) {
+      super(message)
+      this.code = fields.code ?? null
+    }
+  }
+  return {
+    MetaApiError,
+    editMessageTemplate: vi.fn(async () => ({})),
+    deleteMessageTemplate: vi.fn(async (): Promise<unknown> => ({})),
+  }
+})
 vi.mock('@/lib/whatsapp/meta-api', () => meta)
 
 vi.mock('@/lib/whatsapp/template-header-handle', () => ({
@@ -217,5 +227,31 @@ describe('PATCH category changes', () => {
     expect(meta.editMessageTemplate).toHaveBeenCalledWith(
       expect.objectContaining({ category: undefined }),
     )
+  })
+})
+
+describe('DELETE when Meta refuses', () => {
+  it('explains a permission refusal and keeps the local row', async () => {
+    meta.deleteMessageTemplate.mockRejectedValueOnce(
+      new meta.MetaApiError(
+        '(#100) Need permission on either WhatsApp Business Account or owner/shared business.',
+        { code: 100 },
+      ),
+    )
+    const res = await DELETE(new Request('http://localhost/t'), { params })
+    expect(res.status).toBe(403)
+    const body = await res.json()
+    expect(body.can_remove_locally).toBe(true)
+    expect(body.error).not.toContain('(#100)')
+    expect(templateDeletes).toBe(0)
+  })
+
+  it('removes the row without calling Meta for scope=local', async () => {
+    const res = await DELETE(new Request('http://localhost/t?scope=local'), {
+      params,
+    })
+    expect(res.status).toBe(200)
+    expect(meta.deleteMessageTemplate).not.toHaveBeenCalled()
+    expect(templateDeletes).toBe(1)
   })
 })
